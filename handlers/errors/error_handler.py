@@ -1,8 +1,7 @@
 import logging
-from aiogram.utils.exceptions import (Unauthorized, InvalidQueryID, TelegramAPIError,
-                                      CantDemoteChatCreator, MessageNotModified, MessageToDeleteNotFound,
-                                      MessageTextIsEmpty, RetryAfter,
-                                      CantParseEntities, MessageCantBeDeleted)
+from aiogram.utils.exceptions import (TelegramAPIError,
+                                      MessageNotModified,
+                                      CantParseEntities)
 
 
 from loader import dp
