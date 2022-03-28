@@ -4,7 +4,7 @@ import logging
 
 from loader import dp
 from utils.misc.check_number_correct import is_number
-from handlers.users import give_get, course
+from handlers.users import give_get, course, direct_to_manager
 
 
 @dp.message_handler(state="*")
@@ -16,25 +16,27 @@ async def go_buy(message: types.Message, state: FSMContext):
     elif message.text == "Курс крипты":
         await course.get_course(message, state)
     elif state is None:
-        await bot_echo(message)
+        pass
     else:
         current_state = await state.get_state()
         if current_state == "Buy":
             logging.info(f"Buying {message.text}")
             if await is_number(message.text):
-                logging.info("Ok")
+                logging.info("Buy Ok")
+                await direct_to_manager.redirect(message, state)
             else:
                 await give_get.incorrect_give_get(message, state)
 
         elif current_state == "Sell":
             logging.info(f"Selling {message.text}")
             if await is_number(message.text):
-                logging.info("Ok")
+                logging.info("Sell Ok")
+                await direct_to_manager.redirect(message, state)
             else:
                 await give_get.incorrect_give_get(message, state)
 
         else:
-            await bot_echo_all(message, state)
+            pass
 
 
 # Эхо хендлер, куда летят текстовые сообщения без указанного состояния
