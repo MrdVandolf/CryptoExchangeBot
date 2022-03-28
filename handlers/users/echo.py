@@ -4,17 +4,17 @@ import logging
 
 from loader import dp
 from utils.misc.functions import is_number, is_valid_manager_password
-from handlers.users import give_get, course, direct_to_manager, manager
+from handlers.users import give_get, course, direct_to_manager, manager, transaction_handler
 
 
 @dp.message_handler(state="*")
 async def go_buy(message: types.Message, state: FSMContext):
 
     if message.text == "Купить криптовалюту":
-        await give_get.get_crypto(message, state)
+        await give_get.buy_crypto(message, state)
 
     elif message.text == "Продать криптовалюту":
-        await give_get.give_crypto(message, state)
+        await give_get.sell_crypto(message, state)
 
     elif message.text == "Курс криптовалюты":
         await course.get_course(message, state)
@@ -29,17 +29,19 @@ async def go_buy(message: types.Message, state: FSMContext):
             logging.info(f"Buying {message.text}")
             if await is_number(message.text):
                 logging.info("Buy Ok")
-                await direct_to_manager.redirect(message, state)
+                await transaction_handler.handle_transaction(message, state)
+               #await direct_to_manager.redirect(message, state)
             else:
-                await give_get.incorrect_give_get(message, state)
+                await give_get.incorrect_sell_buy(message, state)
 
         elif current_state == "Sell":
             logging.info(f"Selling {message.text}")
             if await is_number(message.text):
                 logging.info("Sell Ok")
-                await direct_to_manager.redirect(message, state)
+                await transaction_handler.handle_transaction(message, state)
+                #await direct_to_manager.redirect(message, state)
             else:
-                await give_get.incorrect_give_get(message, state)
+                await give_get.incorrect_sell_buy(message, state)
 
         elif current_state == "VerifyManager":
             logging.info(f"Verifying manager")

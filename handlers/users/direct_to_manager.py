@@ -10,16 +10,16 @@ async def redirect(message: types.Message, state: FSMContext):
     logging.info("Redirect")
     current_state = await state.get_state()
 
-    request_type = "купить" if current_state == "Buy" else "продать"
-    user_nick = f"@{message.from_user.username}"
-    user_name = message.from_user.full_name
+    request_type = "покупку" if current_state == "Buy" else "продажу"
+    #user_nick = f"@{message.from_user.username}"
+    #user_name = message.from_user.full_name
 
     managers = await db.get_managers_ids()
     logging.info(f"Менеджеры: {managers}")
     #logging.info(f"Managers: {managers}")
 
     for i in managers:
-        await bot.send_message(chat_id=i, text=f"[МЕНЕДЖЕРУ] {user_name} ({user_nick}) хочет "
+        await bot.send_message(chat_id=i, text=f"[МЕНЕДЖЕРУ] запрос на "
                                                f"{request_type} {message.text} криптовалюты")
     await user_after_redirect(message, state)
 

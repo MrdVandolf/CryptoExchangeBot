@@ -78,6 +78,8 @@ class Database:
         type VARCHAR(255) NOT NULL,
         telegram_id INTEGER NOT NULL,
         full_name VARCHAR(255) NOT NULL,
+        user_name VARCHAR(255) NOT NULL,
+        amount INTEGER NOT NULL,
         status VARCHAR(255) NOT NULL
         );
         """
@@ -85,15 +87,27 @@ class Database:
             await self.execute(elem, execute=True)
 
     async def get_managers_ids(self):
-        req = "SELECT telegram_id FROM Managers"
+        req = "SELECT telegram_id FROM Managers;"
         res = list(map(lambda x: x[0], await self.execute(req, fetch=True)))
         return res
 
     async def add_manager(self, tid, full_name):
-        req = "INSERT INTO Managers(id, telegram_id, full_name) VALUES ($1, $2, $3)"
+        req = "INSERT INTO Managers(id, telegram_id, full_name) VALUES ($1, $2, $3);"
         return await self.execute(req, tid, tid, full_name, execute=True)
 
     async def has_manager(self, tid):
-        req = "SELECT * FROM Managers WHERE telegram_id = $1"
+        req = "SELECT * FROM Managers WHERE telegram_id = $1;"
         res = await self.execute(req, tid, fetchval=True)
         return res is not None
+
+    async def add_transaction(self, tid, full_name, user_name, trans_type, crypto_amount):
+        req = "INSERT INTO Requests(type, telegram_id, full_name, user_name, amount, status)" \
+              " VALUES($1, $2, $3, $4, $5, $6) RETURNING id;"
+        res = await self.execute(req, trans_type, tid, full_name, user_name, crypto_amount, "OPEN",
+                                 fetchval=True)
+        return res
+
+    async def get_transaction(self, id):
+        req = "SELECT * FROM Requests WHERE id = $1;"
+        res = await self.execute(req, id, fetchrow=True)
+        return res[0]
