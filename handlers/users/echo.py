@@ -3,22 +3,28 @@ from aiogram.dispatcher import FSMContext
 import logging
 
 from loader import dp
-from utils.misc.check_number_correct import is_number
-from handlers.users import give_get, course, direct_to_manager
+from utils.misc.functions import is_number, is_valid_manager_password
+from handlers.users import give_get, course, direct_to_manager, manager
 
 
 @dp.message_handler(state="*")
 async def go_buy(message: types.Message, state: FSMContext):
-    if message.text == "Получить крипту":
+
+    if message.text == "Купить криптовалюту":
         await give_get.get_crypto(message, state)
-    elif message.text == "Отдать крипту":
+
+    elif message.text == "Продать криптовалюту":
         await give_get.give_crypto(message, state)
-    elif message.text == "Курс крипты":
+
+    elif message.text == "Курс криптовалюты":
         await course.get_course(message, state)
+
     elif state is None:
         pass
+
     else:
         current_state = await state.get_state()
+
         if current_state == "Buy":
             logging.info(f"Buying {message.text}")
             if await is_number(message.text):
@@ -34,6 +40,14 @@ async def go_buy(message: types.Message, state: FSMContext):
                 await direct_to_manager.redirect(message, state)
             else:
                 await give_get.incorrect_give_get(message, state)
+
+        elif current_state == "VerifyManager":
+            logging.info(f"Verifying manager")
+            password = message.text
+            if await is_valid_manager_password(password):
+                await manager.verify(message, state)
+            else:
+                await manager.not_verified(message, state)
 
         else:
             pass

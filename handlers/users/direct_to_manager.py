@@ -14,7 +14,11 @@ async def redirect(message: types.Message, state: FSMContext):
     user_nick = f"@{message.from_user.username}"
     user_name = message.from_user.full_name
 
-    for i in [460659997]:
+    managers = await db.get_managers_ids()
+    logging.info(f"Менеджеры: {managers}")
+    #logging.info(f"Managers: {managers}")
+
+    for i in managers:
         await bot.send_message(chat_id=i, text=f"[МЕНЕДЖЕРУ] {user_name} ({user_nick}) хочет "
                                                f"{request_type} {message.text} криптовалюты")
     await user_after_redirect(message, state)

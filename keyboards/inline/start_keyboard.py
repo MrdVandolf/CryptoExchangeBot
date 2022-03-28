@@ -6,15 +6,15 @@ start_choice = ReplyKeyboardMarkup(row_width=2,
                                     keyboard=[
                                         [
                                             KeyboardButton(
-                                                text="Получить крипту"
+                                                text="Купить криптовалюту"
                                             ),
                                             KeyboardButton(
-                                                text="Отдать крипту"
+                                                text="Продать криптовалюту"
                                             )
                                         ],
                                         [
                                             KeyboardButton(
-                                                text="Курс крипты"
+                                                text="Курс криптовалюты"
                                             )
                                         ]
                                     ])

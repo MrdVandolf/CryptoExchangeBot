@@ -77,9 +77,23 @@ class Database:
         id SERIAL PRIMARY KEY,
         type VARCHAR(255) NOT NULL,
         telegram_id INTEGER NOT NULL,
-        full_name VARCHAR(255) NOT NULL
+        full_name VARCHAR(255) NOT NULL,
+        status VARCHAR(255) NOT NULL
         );
         """
         for elem in [managers, requests]:
             await self.execute(elem, execute=True)
 
+    async def get_managers_ids(self):
+        req = "SELECT telegram_id FROM Managers"
+        res = list(map(lambda x: x[0], await self.execute(req, fetch=True)))
+        return res
+
+    async def add_manager(self, tid, full_name):
+        req = "INSERT INTO Managers(id, telegram_id, full_name) VALUES ($1, $2, $3)"
+        return await self.execute(req, tid, tid, full_name, execute=True)
+
+    async def has_manager(self, tid):
+        req = "SELECT * FROM Managers WHERE telegram_id = $1"
+        res = await self.execute(req, tid, fetchval=True)
+        return res is not None
