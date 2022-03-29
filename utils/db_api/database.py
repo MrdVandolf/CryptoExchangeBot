@@ -153,7 +153,11 @@ class Database:
     async def get_open_transaction_id(self):
         req = "SELECT id FROM Requests WHERE status = $1"
         res = await self.execute(req, "OPEN", fetch=True)
-        return res[0]["id"]
+        if len(res) > 0:
+            res = res[0]["id"]
+        else:
+            res = None
+        return res
 
     async def add_course(self, course):
         req = "INSERT INTO Courses(course) VALUES($1)"
