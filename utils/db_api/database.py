@@ -89,7 +89,7 @@ class Database:
         course VARCHAR(255) NOT NULL
         )
         """
-        for elem in [managers, requests]:
+        for elem in [managers, requests, courses]:
             await self.execute(elem, execute=True)
 
     async def get_managers_ids(self):
@@ -131,3 +131,24 @@ class Database:
         req = "SELECT id FROM Requests WHERE status = $1"
         res = await self.execute(req, "OPEN", fetchval=True)
         return res
+
+    async def add_course(self, course):
+        req = "INSERT INTO Courses(course) VALUES($1)"
+        return await self.execute(req, course, execute=True)
+
+    async def update_course(self, id, course):
+        req = "UPDATE Courses SET course = $1 WHERE id = $2"
+        return await self.execute(req, course, id, execute=True)
+
+    async def remove_course(self, id):
+        req = "DELETE FROM Courses WHERE id = $1"
+        return await self.execute(req, id, execute=True)
+
+    async def get_courses(self):
+        req = "SELECT * FROM Courses"
+        return await self.execute(req, fetch=True)
+
+    async def has_course(self, id):
+        req = "SELECT course FROM Courses WHERE id = $1"
+        res = await self.execute(req, id, fetchval=True)
+        return res is not None

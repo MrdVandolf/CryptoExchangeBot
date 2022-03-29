@@ -4,19 +4,24 @@ import logging
 
 from loader import dp, db
 from utils.misc.functions import is_number, is_valid_manager_password
-from handlers.users import give_get, course, direct_to_manager, manager, transaction_handler
-from keyboards.inline.start_keyboard import start_choice
+from handlers.users import give_get, course, direct_to_manager, manager, transaction_handler, course_handler
+from keyboards.inline.start_keyboard import start_choice, start_choice_manager
 
 
 @dp.message_handler(state="*")
-async def go_buy(message: types.Message, state: FSMContext):
+async def general(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
-
     if current_state == "Processing":
         if message.text == "Отменена":
             await direct_to_manager.cancel_request(message, state)
         elif message.text == "Завершена":
             await direct_to_manager.complete_request(message, state)
+
+    elif current_state == "AddingCourse":
+        await process_new_course(message, state)
+
+    elif current_state == "RemovingCourse":
+        await process_removing_course(message, state)
 
     elif message.text == "Обработать запрос на сделку" and await db.has_manager(message.from_user.id):
         await direct_to_manager.get_open_transaction(message, state)
@@ -80,3 +85,20 @@ async def bot_echo_all(message: types.Message, state: FSMContext):
     await message.answer(f"Эхо в состоянии <code>{state}</code>.\n"
                          f"\nСодержание сообщения:\n"
                          f"<code>{message}</code>")
+
+
+async def process_new_course(message: types.Message, state: FSMContext):
+    await db.add_course(message.text)
+    await message.answer("Курс успешно добавлен!", reply_markup=start_choice_manager)
+    await state.finish()
+
+
+async def process_removing_course(message: types.Message, state: FSMContext):
+    has_this_id = await db.has_course(int(message.text))
+    if has_this_id:
+        await db.remove_course(int(message.text))
+        await message.answer("Курс успешно удален!", reply_markup=start_choice_manager)
+        await state.finish()
+    else:
+        await message.answer("Нет курса с таким id.")
+        await course_handler.remove_course(message, state)

@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import ReplyKeyboardRemove, KeyboardButton, ReplyKeyboardMarkup
 from keyboards.inline.callback_data import buy_crypto, sell_crypto, get_course
 
 
@@ -39,3 +39,5 @@ start_choice_manager = ReplyKeyboardMarkup(row_width=2,
                                             )
                                         ]
                                     ])
+
+removal = ReplyKeyboardRemove()

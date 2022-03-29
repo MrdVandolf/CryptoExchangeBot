@@ -42,7 +42,7 @@ async def process_callback_transaction(call: types.CallbackQuery, state: FSMCont
 
     if current_state != "Processing":
         trans_id = int(call.data.split(':')[1])
-        process_transaction(call.message, state, trans_id)
+        await process_transaction(call.message, state, trans_id)
 
 
 async def process_transaction(message: types.Message, state: FSMContext, trans_id: int):
@@ -70,9 +70,11 @@ async def cancel_request(message: types.Message, state: FSMContext):
     data = await state.get_data()
     await message.answer(f"Сделка №{data['transaction_id']} была отменена.", reply_markup=start_choice_manager)
     await db.change_transaction_status(data['transaction_id'], "CANCELLED")
+    await state.finish()
 
 
 async def complete_request(message: types.Message, state: FSMContext):
     data = await state.get_data()
     await message.answer(f"Сделка №{data['transaction_id']} была завершена.", reply_markup=start_choice_manager)
     await db.change_transaction_status(data['transaction_id'], "COMPLETED")
+    await state.finish()

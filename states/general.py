@@ -7,3 +7,6 @@ class OrderState(StatesGroup):
     Sell = State()
     VerifyManager = State()
     Processing = State()
+    AddingCourse = State()
+    EditingCourse = State()
+    RemovingCourse = State()

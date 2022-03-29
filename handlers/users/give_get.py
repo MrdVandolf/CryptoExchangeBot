@@ -27,7 +27,7 @@ async def incorrect_sell_buy(message: types.Message, state: FSMContext):
 
 @dp.message_handler(Command("give"), state="*")
 async def sell_crypto(message: types.Message, state: FSMContext):
-    text = 'Вы хотите отдать крипту. Выберите количество'
+    text = 'Введите цифрами то, сколько токенов вы хотите продать (целое число)'
     markup = crypto_amount_board
     await state.set_state("Sell")
     await message.answer(text, reply_markup=markup)
@@ -35,7 +35,7 @@ async def sell_crypto(message: types.Message, state: FSMContext):
 
 @dp.message_handler(Command("get"), state="*")
 async def buy_crypto(message: types.Message, state: FSMContext):
-    text = 'Вы хотите получить крипту. Выберите количество'
+    text = 'Введите цифрами то, сколько токенов вы хотите купить (целое число)'
     markup = crypto_amount_board
     await state.set_state("Buy")
     await message.answer(text, reply_markup=markup)

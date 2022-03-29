@@ -6,4 +6,5 @@ from . import give_get
 from . import course
 from . import transaction_handler
 from . import direct_to_manager
+from . import course_handler
 from . import echo

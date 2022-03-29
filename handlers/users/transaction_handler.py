@@ -20,9 +20,9 @@ async def handle_transaction(message: types.Message, state: FSMContext):
 
 async def user_after_redirect(message: types.Message, state: FSMContext, trid: int):
     await state.finish()
-    markup = start_choice_manager if db.has_manager(message.from_user.id) else start_choice
+    markup = start_choice_manager if await db.has_manager(message.from_user.id) else start_choice
     await message.answer("Ваш запрос успешно отправлен нашим менеджерам! Вскоре они свяжутся"
                          " с вами и помогут совершить сделку.\n"
                          f"Ваш запрос на сделку - {trid}\n"
                          "Обязательно спросите у менеджера номер заявки (сделки), которую"
-                         "он обрабатывает, чтобы избежать мошенников!", reply_markup=markup)
+                         " он обрабатывает, чтобы избежать мошенников!", reply_markup=markup)
