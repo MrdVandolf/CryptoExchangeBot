@@ -1,6 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
+from aiogram.types import ParseMode
 
 from loader import dp, db
 from keyboards.inline.start_keyboard import removal
@@ -29,4 +30,4 @@ async def remove_course(message: types.Message, state: FSMContext):
             text = "Впишите id курса, который вы хотите удалить:\n"
             for i in range(len(info)):
                 text += f"{info[i]['course']} (id={info[i]['id']})\n"
-            await message.answer(text, reply_markup=removal)
+            await message.answer(text, reply_markup=removal, parse_mode=ParseMode.MARKDOWN)

@@ -3,7 +3,7 @@ from aiogram.dispatcher.filters import Command
 from aiogram.dispatcher import FSMContext
 
 from loader import dp
-from keyboards.inline import buy_crypto, sell_crypto, crypto_amount_board
+from keyboards.inline import buy_crypto, sell_crypto, crypto_amount_board_give, crypto_amount_board_get
 
 
 @dp.callback_query_handler(sell_crypto.filter(callback_info="sell"), state="*")
@@ -27,15 +27,17 @@ async def incorrect_sell_buy(message: types.Message, state: FSMContext):
 
 @dp.message_handler(Command("give"), state="*")
 async def sell_crypto(message: types.Message, state: FSMContext):
-    text = 'Введите цифрами то, сколько токенов вы хотите продать (целое число)'
-    markup = crypto_amount_board
+    text = 'Выберите диапазон токенов, которые вы хотите отдать (или введите число цифрами самостоятельно)\n' \
+           ' О точных деталях сделки вы сможете договориться с менеджером!'
+    markup = crypto_amount_board_give
     await state.set_state("Sell")
     await message.answer(text, reply_markup=markup)
 
 
 @dp.message_handler(Command("get"), state="*")
 async def buy_crypto(message: types.Message, state: FSMContext):
-    text = 'Введите цифрами то, сколько токенов вы хотите купить (целое число)'
-    markup = crypto_amount_board
+    text = 'Выберите диапазон токенов, которые вы хотите получить (или введите число цифрами самостоятельно)\n' \
+           ' О точных деталях сделки вы сможете договориться с менеджером!'
+    markup = crypto_amount_board_get
     await state.set_state("Buy")
     await message.answer(text, reply_markup=markup)

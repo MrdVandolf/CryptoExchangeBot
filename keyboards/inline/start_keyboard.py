@@ -1,20 +1,24 @@
 from aiogram.types import ReplyKeyboardRemove, KeyboardButton, ReplyKeyboardMarkup
 from keyboards.inline.callback_data import buy_crypto, sell_crypto, get_course
+from data.global_messages import *
 
 
 start_choice = ReplyKeyboardMarkup(row_width=2,
                                     keyboard=[
                                         [
                                             KeyboardButton(
-                                                text="Купить криптовалюту"
+                                                text=global_buy_crypto
                                             ),
                                             KeyboardButton(
-                                                text="Продать криптовалюту"
+                                                text=global_sell_crypto
                                             )
                                         ],
                                         [
                                             KeyboardButton(
-                                                text="Курс криптовалюты"
+                                                text=global_get_today_course
+                                            ),
+                                            KeyboardButton(
+                                                text=user_contact_manager
                                             )
                                         ]
                                     ])
@@ -24,18 +28,18 @@ start_choice_manager = ReplyKeyboardMarkup(row_width=2,
                                     keyboard=[
                                         [
                                             KeyboardButton(
-                                                text="Купить криптовалюту"
+                                                text=global_buy_crypto
                                             ),
                                             KeyboardButton(
-                                                text="Продать криптовалюту"
+                                                text=global_sell_crypto
                                             )
                                         ],
                                         [
                                             KeyboardButton(
-                                                text="Курс криптовалюты"
+                                                text=global_get_today_course
                                             ),
                                             KeyboardButton(
-                                                text="Обработать запрос на сделку"
+                                                text=manager_process_request
                                             )
                                         ]
                                     ])

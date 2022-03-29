@@ -1,6 +1,8 @@
 from aiogram import types
 from aiogram.dispatcher.filters import Command
 from aiogram.dispatcher import FSMContext
+from aiogram.types import ParseMode
+
 from keyboards.inline import get_course
 from loader import dp, db
 
@@ -19,4 +21,4 @@ async def get_course(message: types.Message, state: FSMContext):
     if text == "":
         text = "На данный момент курсы не указаны"
     await state.finish()
-    await message.answer(text)
+    await message.answer(text, parse_mode=ParseMode.MARKDOWN)

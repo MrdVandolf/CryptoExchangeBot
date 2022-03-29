@@ -1,0 +1,5 @@
+global_buy_crypto = "Получить MOST Token"
+global_sell_crypto = "Отдать MOST Token"
+global_get_today_course = "Курс на сегодня"
+manager_process_request = "Обработать запрос"
+user_contact_manager = "Связь с менеджером"
