@@ -119,6 +119,11 @@ async def try_to_finish(message: types.Message, state: FSMContext):
             await state.finish()
             await message.answer(f"Сделка №{tid} была успешно {one_made}", reply_markup=start_choice_manager)
 
+        else:
+            logging.info("Error: manager is not the processor of this request OR request with this id doesn't exist")
+            await state.finish()
+            await message.answer("Вам недоступна сделка с этим id.", reply_markup=start_choice_manager)
+
     else:
         logging.info("Error: incorrect id")
         await state.finish()
