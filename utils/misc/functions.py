@@ -2,7 +2,9 @@ from data import config
 
 
 async def is_number(val: str):
-    return val.isdigit()
+    diapazon = val in ['5-19', '20-49', '50+', '50-99', '100+']
+    isdig = val.isdigit()
+    return diapazon or isdig
 
 
 async def is_valid_manager_password(val: str):

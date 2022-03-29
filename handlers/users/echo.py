@@ -15,27 +15,39 @@ async def general(message: types.Message, state: FSMContext):
 
     if current_state == "Processing":
         if message.text == "Отменена":
+            logging.info("Cancel request")
             await direct_to_manager.cancel_request(message, state)
         elif message.text == "Завершена":
+            logging.info("Complete request")
             await direct_to_manager.complete_request(message, state)
 
     elif current_state == "AddingCourse":
+        logging.info("Try to add course")
         await process_new_course(message, state)
 
     elif current_state == "RemovingCourse":
+        logging.info("Try to remove course")
         await process_removing_course(message, state)
 
-    elif message.text == "Обработать запрос на сделку" and await db.has_manager(message.from_user.id):
+    elif message.text == manager_process_request and await db.has_manager(message.from_user.id):
+        logging.info("Getting open request from user")
         await direct_to_manager.get_open_transaction(message, state)
 
-    elif message.text == "Купить криптовалюту":
+    elif message.text == global_buy_crypto:
+        logging.info("Trying to buy crypto")
         await give_get.buy_crypto(message, state)
 
-    elif message.text == "Продать криптовалюту":
+    elif message.text == global_sell_crypto:
+        logging.info("Trying to sell crypto")
         await give_get.sell_crypto(message, state)
 
-    elif message.text == "Курс криптовалюты":
+    elif message.text == global_get_today_course:
+        logging.info("Getting todays course")
         await course.get_course(message, state)
+
+    elif message.text == user_contact_manager:
+        logging.info("Left a message to manager")
+        await process_manager_contact(message, state)
 
     elif state is None:
         pass
@@ -49,6 +61,7 @@ async def general(message: types.Message, state: FSMContext):
                 await transaction_handler.handle_transaction(message, state)
                #await direct_to_manager.redirect(message, state)
             else:
+                logging.info("Buy not ok")
                 await give_get.incorrect_sell_buy(message, state)
 
         elif current_state == "Sell":
@@ -58,6 +71,7 @@ async def general(message: types.Message, state: FSMContext):
                 await transaction_handler.handle_transaction(message, state)
                 #await direct_to_manager.redirect(message, state)
             else:
+                logging.info("Sell not ok")
                 await give_get.incorrect_sell_buy(message, state)
 
         elif current_state == "VerifyManager":
@@ -104,3 +118,9 @@ async def process_removing_course(message: types.Message, state: FSMContext):
     else:
         await message.answer("Нет курса с таким id.")
         await course_handler.remove_course(message, state)
+
+
+async def process_manager_contact(message: types.Message, state: FSMContext):
+    manager_username = await db.get_any_manager_contact()
+    await message.answer(f"Опишите вашу ситуацию нашему менеджеру - @{manager_username} - в личном сообщении."
+                         f" Менеджер ответи в ближайшее время!")

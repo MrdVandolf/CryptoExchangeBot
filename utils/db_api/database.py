@@ -1,4 +1,6 @@
+from random import choice
 from typing import Union
+from datetime import datetime
 
 import asyncpg
 from asyncpg import Connection
@@ -69,18 +71,21 @@ class Database:
         CREATE TABLE IF NOT EXISTS Managers(
         id SERIAL PRIMARY KEY,
         telegram_id VARCHAR(255) NOT NULL,
-        full_name VARCHAR(255) NOT NULL
+        full_name VARCHAR(255) NOT NULL,
+        user_name VARCHAR(255) NOT NULL
         );
         """
         requests = """
         CREATE TABLE IF NOT EXISTS Requests(
         id SERIAL PRIMARY KEY,
+        last_update TIMESTAMP NOT NULL,
         type VARCHAR(255) NOT NULL,
         telegram_id VARCHAR(255) NOT NULL,
         full_name VARCHAR(255) NOT NULL,
         user_name VARCHAR(255) NOT NULL,
-        amount INTEGER NOT NULL,
-        status VARCHAR(255) NOT NULL
+        amount VARCHAR(255) NOT NULL,
+        status VARCHAR(255) NOT NULL,
+        processor VARCHAR(255)
         );
         """
         courses = """
@@ -97,19 +102,26 @@ class Database:
         res = list(map(lambda x: x[0], await self.execute(req, fetch=True)))
         return list(map(int, res))
 
-    async def add_manager(self, tid, full_name):
-        req = "INSERT INTO Managers(telegram_id, full_name) VALUES ($1, $2);"
-        return await self.execute(req, str(tid), full_name, execute=True)
+    async def add_manager(self, tid, full_name, user_name):
+        req = "INSERT INTO Managers(telegram_id, full_name, user_name) VALUES ($1, $2, $3);"
+        return await self.execute(req, str(tid), full_name, user_name, execute=True)
 
     async def has_manager(self, tid):
         req = "SELECT * FROM Managers WHERE telegram_id = $1;"
         res = await self.execute(req, str(tid), fetchval=True)
         return res is not None
 
+    async def get_any_manager_contact(self):
+        req = "SELECT user_name FROM Managers;"
+        res = await self.execute(req, fetch=True)
+        return choice(res)["user_name"]
+
+
     async def add_transaction(self, tid, full_name, user_name, trans_type, crypto_amount):
-        req = "INSERT INTO Requests(type, telegram_id, full_name, user_name, amount, status)" \
-              " VALUES($1, $2, $3, $4, $5, $6) RETURNING id;"
-        res = await self.execute(req, trans_type, str(tid), full_name, user_name, crypto_amount, "OPEN",
+        req = "INSERT INTO Requests(last_update, type, telegram_id, full_name, user_name, amount, status)" \
+              " VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id;"
+        res = await self.execute(req, datetime.now().replace(microsecond=0), trans_type,
+                                 str(tid), full_name, user_name, crypto_amount, "OPEN",
                                  fetchval=True)
         return res
 
@@ -123,9 +135,16 @@ class Database:
         res = await self.execute(req, id, fetchval=True)
         return res
 
-    async def change_transaction_status(self, id, status):
-        req = "UPDATE Requests SET status = $1 WHERE id = $2"
-        return await self.execute(req, status, id, execute=True)
+    async def change_transaction_status(self, id, status, proc=None):
+        res = None
+        if proc is None:
+            req = "UPDATE Requests SET status = $1, last_update = $2 WHERE id = $3;"
+            res = await self.execute(req, status, datetime.now().replace(microsecond=0),
+                                     id, execute=True)
+        else:
+            req = "UPDATE Requests SET status = $1, last_update = $2, processor = $3 WHERE id = $4;"
+            res = await self.execute(req, status, datetime.now().replace(microsecond=0), proc, id, execute=True)
+        return res
 
     async def get_open_transaction_id(self):
         req = "SELECT id FROM Requests WHERE status = $1"

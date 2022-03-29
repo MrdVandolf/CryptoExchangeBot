@@ -40,6 +40,9 @@ start_choice_manager = ReplyKeyboardMarkup(row_width=2,
                                             ),
                                             KeyboardButton(
                                                 text=manager_process_request
+                                            ),
+                                            KeyboardButton(
+                                                text=manager_process_help
                                             )
                                         ]
                                     ])

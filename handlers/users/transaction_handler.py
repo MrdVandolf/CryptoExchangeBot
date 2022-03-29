@@ -8,7 +8,7 @@ from keyboards.inline.start_keyboard import start_choice, start_choice_manager
 
 async def handle_transaction(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
-    crypto_amount = int(message.text)
+    crypto_amount = message.text
     tid = message.from_user.id
     full_name = message.from_user.full_name
     user_name = message.from_user.username

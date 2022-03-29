@@ -51,7 +51,8 @@ async def process_transaction(message: types.Message, state: FSMContext, trans_i
     if trans_status == "OPEN":
         await state.set_state("Processing")
         await state.update_data(transaction_id=trans_id)
-        await db.change_transaction_status(trans_id, "PROCESSING")
+        manager_id = str(message.chat.id)
+        await db.change_transaction_status(trans_id, "PROCESSING", manager_id)
         info = await db.get_transaction(trans_id)
         text = await form_the_request_message(info)
         await message.answer(text, reply_markup=manager_request_completion)
