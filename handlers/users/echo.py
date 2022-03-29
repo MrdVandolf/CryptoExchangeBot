@@ -64,6 +64,18 @@ async def general(message: types.Message, state: FSMContext):
         logging.info("Left a message to manager")
         await process_manager_contact(message, state)
 
+    elif message.text == "/manager":
+        logging.info("Trying to register as manager")
+        await manager.bot_manage(message, state)
+
+    elif message.text == "/add_course":
+        logging.info("Adding a course through text command")
+        await course_handler.add_course(message, state)
+
+    elif message.text == "/remove_course":
+        logging.info("Removing a course through text command")
+        await course_handler.remove_course(message, state)
+
     elif state is None:
         pass
 
