@@ -8,15 +8,3 @@ crypto_amount_board = ReplyKeyboardMarkup(row_width=3,
                                               KeyboardButton(text="10"),
                                               KeyboardButton(text="100"),
                                            ]])
-
-'''
-crypto_amount_board = InlineKeyboardMarkup(row_width=3,
-                                           inline_keyboard=[[
-                                              InlineKeyboardButton(text="1",
-                                                                   callback_data=set_crypto_amount.new("1")),
-                                              InlineKeyboardButton(text="10",
-                                                                   callback_data=set_crypto_amount.new("10")),
-                                              InlineKeyboardButton(text="100",
-                                                                   callback_data=set_crypto_amount.new("100")),
-                                           ]])
-'''

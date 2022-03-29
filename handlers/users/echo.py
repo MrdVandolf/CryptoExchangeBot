@@ -2,15 +2,26 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 import logging
 
-from loader import dp
+from loader import dp, db
 from utils.misc.functions import is_number, is_valid_manager_password
 from handlers.users import give_get, course, direct_to_manager, manager, transaction_handler
+from keyboards.inline.start_keyboard import start_choice
 
 
 @dp.message_handler(state="*")
 async def go_buy(message: types.Message, state: FSMContext):
+    current_state = await state.get_state()
 
-    if message.text == "Купить криптовалюту":
+    if current_state == "Processing":
+        if message.text == "Отменена":
+            await direct_to_manager.cancel_request(message, state)
+        elif message.text == "Завершена":
+            await direct_to_manager.complete_request(message, state)
+
+    elif message.text == "Обработать запрос на сделку" and await db.has_manager(message.from_user.id):
+        await direct_to_manager.get_open_transaction(message, state)
+
+    elif message.text == "Купить криптовалюту":
         await give_get.buy_crypto(message, state)
 
     elif message.text == "Продать криптовалюту":
@@ -23,7 +34,6 @@ async def go_buy(message: types.Message, state: FSMContext):
         pass
 
     else:
-        current_state = await state.get_state()
 
         if current_state == "Buy":
             logging.info(f"Buying {message.text}")

@@ -83,6 +83,12 @@ class Database:
         status VARCHAR(255) NOT NULL
         );
         """
+        courses = """
+        CREATE TABLE IF NOT EXISTS Courses(
+        id SERIAL PRIMARY KEY,
+        course VARCHAR(255) NOT NULL
+        )
+        """
         for elem in [managers, requests]:
             await self.execute(elem, execute=True)
 
@@ -110,4 +116,18 @@ class Database:
     async def get_transaction(self, id):
         req = "SELECT * FROM Requests WHERE id = $1;"
         res = await self.execute(req, id, fetchrow=True)
-        return res[0]
+        return res
+
+    async def get_transaction_status(self, id):
+        req = "SELECT status FROM Requests WHERE id = $1"
+        res = await self.execute(req, id, fetchval=True)
+        return res
+
+    async def change_transaction_status(self, id, status):
+        req = "UPDATE Requests SET status = $1 WHERE id = $2"
+        return await self.execute(req, status, id, execute=True)
+
+    async def get_open_transaction_id(self):
+        req = "SELECT id FROM Requests WHERE status = $1"
+        res = await self.execute(req, "OPEN", fetchval=True)
+        return res

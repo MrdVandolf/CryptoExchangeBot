@@ -19,26 +19,23 @@ start_choice = ReplyKeyboardMarkup(row_width=2,
                                         ]
                                     ])
 
-"""
-start_choice = InlineKeyboardMarkup(row_width=2,
-                                    inline_keyboard=[
+
+start_choice_manager = ReplyKeyboardMarkup(row_width=2,
+                                    keyboard=[
                                         [
-                                            InlineKeyboardButton(
-                                                text="Получить крипту",
-                                                callback_data=buy_crypto.new("buy")
+                                            KeyboardButton(
+                                                text="Купить криптовалюту"
                                             ),
-                                            InlineKeyboardButton(
-                                                text="Отдать крипту",
-                                                callback_data=sell_crypto.new("sell")
+                                            KeyboardButton(
+                                                text="Продать криптовалюту"
                                             )
                                         ],
                                         [
-                                            InlineKeyboardButton(
-                                                text="Курс крипты",
-                                                callback_data=get_course.new("course")
+                                            KeyboardButton(
+                                                text="Курс криптовалюты"
+                                            ),
+                                            KeyboardButton(
+                                                text="Обработать запрос на сделку"
                                             )
                                         ]
-                                    ]
-
-)
-"""
+                                    ])

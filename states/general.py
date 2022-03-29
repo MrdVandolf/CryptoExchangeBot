@@ -6,3 +6,4 @@ class OrderState(StatesGroup):
     Buy = State()
     Sell = State()
     VerifyManager = State()
+    Processing = State()
