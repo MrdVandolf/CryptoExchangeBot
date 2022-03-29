@@ -114,7 +114,11 @@ class Database:
     async def get_any_manager_contact(self):
         req = "SELECT user_name FROM Managers;"
         res = await self.execute(req, fetch=True)
-        return choice(res)["user_name"]
+        if len(res) > 0:
+            res = choice(res)["user_name"]
+        else:
+            res = None
+        return res
 
     async def add_transaction(self, tid, full_name, user_name, trans_type, crypto_amount):
         req = "INSERT INTO Requests(last_update, type, telegram_id, full_name, user_name, amount, status)" \

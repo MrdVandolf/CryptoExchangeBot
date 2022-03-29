@@ -149,5 +149,8 @@ async def process_removing_course(message: types.Message, state: FSMContext):
 
 async def process_manager_contact(message: types.Message, state: FSMContext):
     manager_username = await db.get_any_manager_contact()
-    await message.answer(f"Опишите вашу ситуацию нашему менеджеру - @{manager_username} - в личном сообщении."
-                         f" Менеджер ответи в ближайшее время!")
+    if manager_username is None:
+        await message.answer("На данный момент в проекте нет ни одного менеджера.")
+    else:
+        await message.answer(f"Опишите вашу ситуацию нашему менеджеру - @{manager_username} - в личном сообщении."
+                             f" Менеджер ответи в ближайшее время!")
