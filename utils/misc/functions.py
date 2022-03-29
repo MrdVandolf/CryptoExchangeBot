@@ -20,3 +20,11 @@ async def form_the_request_message(info):
           f"Если сделка проведена успешно, введите 'Завершена'\n"
 
     return res
+
+
+async def get_request_info(info):
+    type = "продажу" if info["type"] == "Sell" else "покупку"
+    res = f"Сделка №{info['id']}\n" \
+          f"Вторая сторона: {info['full_name']} (@{info['user_name']})\n" \
+          f"Запрос на {type} {info['amount']} токенов криптовалюты.\n"
+    return res

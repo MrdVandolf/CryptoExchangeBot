@@ -116,7 +116,6 @@ class Database:
         res = await self.execute(req, fetch=True)
         return choice(res)["user_name"]
 
-
     async def add_transaction(self, tid, full_name, user_name, trans_type, crypto_amount):
         req = "INSERT INTO Requests(last_update, type, telegram_id, full_name, user_name, amount, status)" \
               " VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id;"
@@ -133,6 +132,11 @@ class Database:
     async def get_transaction_status(self, id):
         req = "SELECT status FROM Requests WHERE id = $1"
         res = await self.execute(req, id, fetchval=True)
+        return res
+
+    async def get_processed_transactions_by_processor(self, id):
+        req = "SELECT * FROM Requests WHERE processor = $1 AND status = $2"
+        res = await self.execute(req, str(id), "PROCESSING", fetch=True)
         return res
 
     async def change_transaction_status(self, id, status, proc=None):

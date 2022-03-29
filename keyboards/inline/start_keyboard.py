@@ -2,49 +2,51 @@ from aiogram.types import ReplyKeyboardRemove, KeyboardButton, ReplyKeyboardMark
 from keyboards.inline.callback_data import buy_crypto, sell_crypto, get_course
 from data.global_messages import *
 
-
 start_choice = ReplyKeyboardMarkup(row_width=2,
-                                    keyboard=[
-                                        [
-                                            KeyboardButton(
-                                                text=global_buy_crypto
-                                            ),
-                                            KeyboardButton(
-                                                text=global_sell_crypto
-                                            )
-                                        ],
-                                        [
-                                            KeyboardButton(
-                                                text=global_get_today_course
-                                            ),
-                                            KeyboardButton(
-                                                text=user_contact_manager
-                                            )
-                                        ]
-                                    ])
-
+                                   keyboard=[
+                                       [
+                                           KeyboardButton(
+                                               text=global_buy_crypto
+                                           ),
+                                           KeyboardButton(
+                                               text=global_sell_crypto
+                                           )
+                                       ],
+                                       [
+                                           KeyboardButton(
+                                               text=global_get_today_course
+                                           ),
+                                           KeyboardButton(
+                                               text=user_contact_manager
+                                           )
+                                       ]
+                                   ])
 
 start_choice_manager = ReplyKeyboardMarkup(row_width=2,
-                                    keyboard=[
-                                        [
-                                            KeyboardButton(
-                                                text=global_buy_crypto
-                                            ),
-                                            KeyboardButton(
-                                                text=global_sell_crypto
-                                            )
-                                        ],
-                                        [
-                                            KeyboardButton(
-                                                text=global_get_today_course
-                                            ),
-                                            KeyboardButton(
-                                                text=manager_process_request
-                                            ),
-                                            KeyboardButton(
-                                                text=manager_process_help
-                                            )
-                                        ]
-                                    ])
+                                           keyboard=[[
+                                               KeyboardButton(
+                                                   text=manager_process_request
+                                               ),
+                                               KeyboardButton(
+                                                   text=global_get_today_course
+                                               )
+                                           ],
+                                               [
+                                               KeyboardButton(
+                                                   text=manager_complete
+                                               ),
+                                               KeyboardButton(
+                                                   text=manager_cancel
+                                               )
+                                           ],
+                                               [
+                                                   KeyboardButton(
+                                                       text=global_buy_crypto
+                                                   ),
+                                                   KeyboardButton(
+                                                       text=global_sell_crypto
+                                                   )
+                                               ]
+                                           ])
 
 removal = ReplyKeyboardRemove()

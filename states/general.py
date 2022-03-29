@@ -10,3 +10,5 @@ class OrderState(StatesGroup):
     AddingCourse = State()
     EditingCourse = State()
     RemovingCourse = State()
+    Cancelling = State()
+    Completing = State()

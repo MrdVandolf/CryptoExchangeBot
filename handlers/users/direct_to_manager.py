@@ -3,7 +3,7 @@ from aiogram.dispatcher import FSMContext
 import logging
 
 from loader import bot, db, dp
-from utils.misc.functions import form_the_request_message
+from utils.misc.functions import form_the_request_message, get_request_info
 from keyboards.inline.request_inline_keyboard import generate_markup, request_callback
 from keyboards.inline.request_finish_keyboard import manager_request_completion
 from keyboards.inline.start_keyboard import start_choice_manager
@@ -79,3 +79,48 @@ async def complete_request(message: types.Message, state: FSMContext):
     await message.answer(f"Сделка №{data['transaction_id']} была завершена.", reply_markup=start_choice_manager)
     await db.change_transaction_status(data['transaction_id'], "COMPLETED")
     await state.finish()
+
+
+async def leave_in_process(message: types.Message, state: FSMContext):
+    data = await state.get_data()
+    await message.answer(f"Сделка №{data['transaction_id']} находится в процессе обработки.\nНе забудьте ее закрыть"
+                         f" позже!", reply_markup=start_choice_manager)
+    await state.finish()
+
+
+async def get_processing_requests(message: types.Message, state: FSMContext, purpose):
+    await state.update_data(purpose=purpose)
+    info = await db.get_processed_transactions_by_processor(str(message.chat.id))
+    if len(info) > 0:
+        p = "отменить" if purpose == "CANCELLED" else "завершить"
+        text = f"Введите ТОЛЬКО номер сделки, которую вы хотите {p}\n\n"
+        for i in info:
+            text += await get_request_info(i)
+            text += '\n\n'
+
+        new_state = "Cancelling" if purpose == "CANCELLED" else "Completing"
+        await state.set_state(new_state)
+    else:
+        text = "У вас нет обрабатываемых сделок на данный момент."
+    await message.answer(text)
+
+
+async def try_to_finish(message: types.Message, state: FSMContext):
+    current_state = await state.get_state()
+    logging.info("Completing/Cancelling in-process request")
+    if message.text.isdigit():
+        logging.info("Correct id")
+        tid = int(message.text)
+        this_transaction = await db.get_transaction(tid)
+        if this_transaction["status"] == "PROCESSING" and this_transaction["processor"] == str(message.chat.id):
+            new_status = "COMPLETED" if current_state == "Completing" else "CANCELLED"
+            await db.change_transaction_status(tid, new_status, str(message.chat.id))
+            one_made = "завершена" if current_state == "Completing" else "отменена"
+            await state.finish()
+            await message.answer(f"Сделка №{tid} была успешно {one_made}", reply_markup=start_choice_manager)
+
+    else:
+        logging.info("Error: incorrect id")
+        await state.finish()
+        await message.answer("Некорректно введенный id. Нажмите кнопку заново и напишите только число.",
+                             reply_markup=start_choice_manager)

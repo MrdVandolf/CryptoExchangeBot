@@ -14,12 +14,19 @@ async def general(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
 
     if current_state == "Processing":
-        if message.text == "Отменена":
+        if message.text == request_cancelled:
             logging.info("Cancel request")
             await direct_to_manager.cancel_request(message, state)
-        elif message.text == "Завершена":
+        elif message.text == request_completed:
             logging.info("Complete request")
             await direct_to_manager.complete_request(message, state)
+        elif message.text == request_in_process:
+            logging.info("Request left in process for now")
+            await direct_to_manager.leave_in_process(message, state)
+
+    elif current_state in ["Cancelling", "Completing"]:
+        logging.info("Choosing request to complete/cancel")
+        await direct_to_manager.try_to_finish(message, state)
 
     elif current_state == "AddingCourse":
         logging.info("Try to add course")
@@ -32,6 +39,14 @@ async def general(message: types.Message, state: FSMContext):
     elif message.text == manager_process_request and await db.has_manager(message.from_user.id):
         logging.info("Getting open request from user")
         await direct_to_manager.get_open_transaction(message, state)
+
+    elif message.text == manager_complete:
+        logging.info("Trying to complete in-process task")
+        await direct_to_manager.get_processing_requests(message, state, "COMPLETED")
+
+    elif message.text == manager_cancel:
+        logging.info("Trying to cancel in-process task")
+        await direct_to_manager.get_processing_requests(message, state, "CANCELLED")
 
     elif message.text == global_buy_crypto:
         logging.info("Trying to buy crypto")
