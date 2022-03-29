@@ -14,7 +14,7 @@ async def set_default_commands(dp):
             types.BotCommand("add_course", "Добавить новый курс валют"),
             #types.BotCommand("edit_course", "Изменить существующий курс валют"),
             types.BotCommand("remove_course", "Удалить существующий курс валют"),
-            types.BotCommand("complete_request", "Отметить сделку как совершенную"),
-            types.BotCommand("cancel_request", "Отметить сделку как отмененную")
+            #types.BotCommand("complete_request", "Отметить сделку как совершенную"),
+            #types.BotCommand("cancel_request", "Отметить сделку как отмененную")
         ]
     )
