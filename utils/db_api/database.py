@@ -150,9 +150,6 @@ class Database:
             res = await self.execute(req, status, datetime.now().replace(microsecond=0), proc, id, execute=True)
         return res
 
-    async def kek(self):
-        return "kek"
-
     async def get_open_transaction_id(self):
         req = "SELECT id FROM Requests WHERE status = $1"
         res = await self.execute(req, "OPEN", fetch=True)
