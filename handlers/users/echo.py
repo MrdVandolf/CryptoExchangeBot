@@ -153,4 +153,4 @@ async def process_manager_contact(message: types.Message, state: FSMContext):
         await message.answer("На данный момент в проекте нет ни одного менеджера.")
     else:
         await message.answer(f"Опишите вашу ситуацию нашему менеджеру - @{manager_username} - в личном сообщении."
-                             f" Менеджер ответи в ближайшее время!")
+                             f" Менеджер ответит в ближайшее время!")
